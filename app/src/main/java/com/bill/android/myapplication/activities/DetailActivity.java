@@ -74,7 +74,7 @@ public class DetailActivity extends AppCompatActivity {
         mRelease.setText(format(mMovie.getReleaseDate()));
         mRating.setRating((float) mMovie.getUserRating() / 2);
 
-        mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mReviewAdapter = new ReviewAdapter(this, mReview);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
 
