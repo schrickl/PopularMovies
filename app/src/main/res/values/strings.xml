@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="endpoint_popular">popular</string>
+    <string name="endpoint_reviews">reviews</string>
+    <string name="endpoint_top_rated">top_rated</string>
+    <string name="endpoint_trailers">trailers</string>
+    <string name="sort_favorites">Favorites</string>
+    <string name="sort_most_popular">Most Popular</string>
+    <string name="sort_top_rated">Top Rated</string>
+    <string name="reviews_text">Reviews</string>
+    <string name="trailers_text">Trailers</string>
+    <string name="writtenby_text">Written By:\u0020</string>
+</resources>
