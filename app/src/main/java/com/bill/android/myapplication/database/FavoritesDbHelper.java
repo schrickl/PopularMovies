@@ -24,10 +24,8 @@ public class FavoritesDbHelper extends SQLiteOpenHelper{
                 FavoritesContract.FavoriteEntry.COLUMN_NAME_TITLE + " TEXT NOT NULL, " +
                 FavoritesContract.FavoriteEntry.COLUMN_NAME_SYNOPSIS + " TEXT, " +
                 FavoritesContract.FavoriteEntry.COLUMN_NAME_RELEASE_DATE + " TEXT, " +
-                FavoritesContract.FavoriteEntry.COLUMN_NAME_VOTE_COUNT + " INTEGER, " +
                 FavoritesContract.FavoriteEntry.COLUMN_NAME_VOTE_AVERAGE + " REAL, " +
-                FavoritesContract.FavoriteEntry.COLUMN_NAME_POSTER_PATH + " TEXT, " +
-                FavoritesContract.FavoriteEntry.COLUMN_NAME_BACKDROP_PATH + " TEXT" +
+                FavoritesContract.FavoriteEntry.COLUMN_NAME_POSTER_PATH + " TEXT " +
                 ");";
 
         db.execSQL(SQL_CREATE_FAVORITES_TABLE);

@@ -18,15 +18,12 @@ public class FavoritesContract {
     public static class FavoriteEntry implements BaseColumns {
 
         public static final String TABLE_NAME = "favorites";
-        public static final String _ID = "_id";
         public static final String COLUMN_NAME_MOVIE_ID = "movie_id";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_SYNOPSIS = "synopsis";
         public static final String COLUMN_NAME_RELEASE_DATE = "release_date";
-        public static final String COLUMN_NAME_VOTE_COUNT = "vote_count";
         public static final String COLUMN_NAME_VOTE_AVERAGE = "vote_average";
         public static final String COLUMN_NAME_POSTER_PATH = "poster_path";
-        public static final String COLUMN_NAME_BACKDROP_PATH = "backdrop_path";
 
         // Create content URI
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()

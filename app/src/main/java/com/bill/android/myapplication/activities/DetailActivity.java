@@ -1,6 +1,8 @@
 package com.bill.android.myapplication.activities;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -10,14 +12,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bill.android.myapplication.R;
 import com.bill.android.myapplication.adapters.ReviewAdapter;
 import com.bill.android.myapplication.adapters.TrailerAdapter;
+import com.bill.android.myapplication.database.FavoritesContract;
+import com.bill.android.myapplication.database.FavoritesContract.FavoriteEntry;
 import com.bill.android.myapplication.models.Movie;
 import com.bill.android.myapplication.models.Review;
 import com.bill.android.myapplication.models.Trailer;
@@ -38,6 +45,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
     private Movie mMovie;
+    private boolean isFavorite = false;
     private ArrayList<Review> mReview = new ArrayList<>();
     private ArrayList<Review> mReviewList = new ArrayList<>();
     private ArrayList<Trailer> mTrailer = new ArrayList<>();
@@ -50,6 +58,7 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.tv_synopsis) TextView mSynopsis;
     @BindView(R.id.rv_reviews) RecyclerView mReviewsRecyclerView;
     @BindView(R.id.rv_trailers) RecyclerView mTrailersRecyclerView;
+    @BindView(R.id.btn_favorite) Button mFavoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +90,45 @@ public class DetailActivity extends AppCompatActivity {
         mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mTrailerAdapter = new TrailerAdapter(this, mTrailer);
         mTrailersRecyclerView.setAdapter(mTrailerAdapter);
+
+        isFavorite = isFavorited(mMovie.getId());
+        setFavoriteText(isFavorite);
+
+        mFavoriteButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isFavorite) {
+                    String mSelectionClause = FavoriteEntry.COLUMN_NAME_MOVIE_ID + " = ?";
+                    String[] mSelectionArgs = {mMovie.getId()};
+                    int mRowsDeleted = getContentResolver().delete(FavoritesContract.FavoriteEntry.CONTENT_URI, mSelectionClause, mSelectionArgs);
+                    Toast.makeText(DetailActivity.this, mMovie.getTitle() + " " + DetailActivity.this.getString(R.string.unfavorited_text), Toast.LENGTH_SHORT).show();
+                } else {
+                    new AddFavoriteTask().execute(mMovie);
+
+                }
+                isFavorite = !isFavorite;
+                setFavoriteText(isFavorite);
+            }
+        });
+
+
+    }
+
+    private void setFavoriteText(boolean favorite) {
+        if (favorite) {
+            mFavoriteButton.setText(getResources().getString(R.string.unfavorite_text));
+        } else {
+            mFavoriteButton.setText(getResources().getString(R.string.favorite_text));
+        }
+    }
+
+    private boolean isFavorited(String movieId) {
+        String mSelectionClause = FavoriteEntry.COLUMN_NAME_MOVIE_ID + " = ?";
+        String[] mSelectionArgs = {movieId};
+        Cursor mCursor = getContentResolver().query(FavoritesContract.FavoriteEntry.CONTENT_URI, null, mSelectionClause, mSelectionArgs, null);                       // The sort order for the returned rows
+        boolean isFavorite = (mCursor != null && mCursor.getCount() == 1);
+        mCursor.close();
+        return isFavorite;
     }
 
     private void loadTrailers() {
@@ -152,7 +200,6 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Trailer> trailers) {
             if (trailers != null) {
                 mTrailer.clear();
-                Log.d(LOG_TAG, "trailerList size: " + mTrailerList.size());
                 mTrailer.addAll(mTrailerList);
                 mTrailerAdapter.notifyDataSetChanged();
             }
@@ -192,8 +239,37 @@ public class DetailActivity extends AppCompatActivity {
             if (reviews != null) {
                 mReview.clear();
                 mReview.addAll(mReviewList);
-                Log.d(LOG_TAG, "ReviewList size: " + mReviewList.size());
                 mReviewAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    // TODO Put this in separate class
+    public class AddFavoriteTask extends AsyncTask<Movie, Void, Uri> {
+        Movie movie;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Uri doInBackground(Movie... params) {
+            movie = params[0];
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(FavoriteEntry.COLUMN_NAME_TITLE, movie.getTitle());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_SYNOPSIS, movie.getSynopsis());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_POSTER_PATH, movie.getPoster());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_VOTE_AVERAGE, movie.getUserRating());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_RELEASE_DATE, movie.getReleaseDate());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_MOVIE_ID, movie.getId());
+            return getContentResolver().insert(FavoritesContract.FavoriteEntry.CONTENT_URI, contentValues);
+        }
+
+        @Override
+        protected void onPostExecute(Uri uri) {
+            if (uri != null) {
+                Toast.makeText(DetailActivity.this, movie.getTitle() + " " + DetailActivity.this.getString(R.string.favorited_text), Toast.LENGTH_SHORT).show();
             }
         }
     }

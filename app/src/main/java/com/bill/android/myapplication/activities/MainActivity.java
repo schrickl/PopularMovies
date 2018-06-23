@@ -1,6 +1,7 @@
 package com.bill.android.myapplication.activities;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -9,12 +10,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.bill.android.myapplication.R;
 import com.bill.android.myapplication.adapters.MovieAdapter;
+import com.bill.android.myapplication.database.FavoritesContract;
+import com.bill.android.myapplication.database.FavoritesContract.FavoriteEntry;
 import com.bill.android.myapplication.models.Movie;
 import com.bill.android.myapplication.utils.NetworkUtils;
 import com.bill.android.myapplication.utils.TmdbJsonUtils;
@@ -64,11 +68,40 @@ public class MainActivity extends AppCompatActivity {
             case R.id.sort_top_rated:
                 new FetchMovieTask().execute(getResources().getString(R.string.endpoint_top_rated));
                 break;
+            case R.id.sort_favorites:
+                loadFavorites();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void loadFavorites() {
+        Cursor mCursor = getContentResolver().query(FavoritesContract.FavoriteEntry.CONTENT_URI, null, null, null, null);                       // The sort order for the returned rows
+
+        Log.d(LOG_TAG, "count: " + mCursor.getCount());
+        if (mCursor != null || mCursor.getCount() > 0) {
+            mMovieList = new ArrayList<>(mCursor.getCount());
+            mCursor.moveToFirst();
+            for (int i = 0; i < mCursor.getCount(); i++) {
+                mMovieList.add(getMovieFromCursor(mCursor));
+            }
+            mAdapter.addData(mMovieList);
+        }
+        mCursor.close();
+    }
+
+    private Movie getMovieFromCursor(Cursor c) {
+        String title = c.getString(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_TITLE));
+        String id = c.getString(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_MOVIE_ID));
+        String synopsis = c.getString(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_SYNOPSIS));
+        double voteAverage = c.getDouble(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_VOTE_AVERAGE));
+        String releaseDate = c.getString(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_RELEASE_DATE));
+        String posterPath = c.getString(c.getColumnIndex(FavoriteEntry.COLUMN_NAME_POSTER_PATH));
+
+        return new Movie(title, id, synopsis, voteAverage, releaseDate, posterPath);
+    }
+    
     private void loadMovieData() {
         ConnectivityManager cm =
                 (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);

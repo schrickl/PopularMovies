@@ -3,11 +3,9 @@ package com.bill.android.myapplication.database;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -126,16 +124,12 @@ public class FavoritesContentProvider extends ContentProvider {
         switch(match) {
             case FAVORITE:
                 numDeleted = db.delete(FavoritesContract.FavoriteEntry.TABLE_NAME, selection, selectionArgs);
-
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + FavoritesContract.FavoriteEntry.TABLE_NAME + "'");
                 break;
             case FAVORITE_WITH_ID:
                 numDeleted = db.delete(FavoritesContract.FavoriteEntry.TABLE_NAME,
                         FavoritesContract.FavoriteEntry.COLUMN_NAME_MOVIE_ID + " = ?",
                         new String[]{String.valueOf(ContentUris.parseId(uri))});
-
-                db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + FavoritesContract.FavoriteEntry.TABLE_NAME + "'");
-            default:
+                default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 

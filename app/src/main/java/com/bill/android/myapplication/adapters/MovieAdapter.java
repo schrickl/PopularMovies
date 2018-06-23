@@ -35,6 +35,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return mMovieList == null ? 0 : mMovieList.size();
     }
 
+    public void addData(ArrayList<Movie> movies) {
+        mMovieList = movies;
+        notifyDataSetChanged();
+    }
+
     // specify the row layout file and click for each row
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
