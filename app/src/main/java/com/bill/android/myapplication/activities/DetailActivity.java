@@ -168,7 +168,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    //TODO Put this in separate class
+    // TODO Put this in separate class
     public class FetchTrailerTask extends AsyncTask<String, Void, ArrayList<Trailer>> {
 
         @Override

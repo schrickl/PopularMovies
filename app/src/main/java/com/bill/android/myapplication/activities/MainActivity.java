@@ -85,8 +85,9 @@ public class MainActivity extends AppCompatActivity {
                 mMovieList.add(i, getMovieFromCursor(mCursor));
             }
 
-            mAdapter.addData(mMovieList);
-            mRecyclerView.setAdapter(mAdapter);
+            mMovie.clear();
+            mMovie.addAll(mMovieList);
+            mAdapter.notifyDataSetChanged();
         }
         mCursor.close();
     }
