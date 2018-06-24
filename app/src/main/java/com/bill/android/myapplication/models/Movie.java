@@ -105,6 +105,10 @@ public class Movie implements Parcelable {
         return this.mMovieUrl + this.mPoster;
     }
 
+    public String getFavoritePoster() {
+        return this.mPoster;
+    }
+
     public void setPoster(String poster) {
         this.mPoster = poster;
     }

@@ -16,7 +16,6 @@
 package com.bill.android.myapplication.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.bill.android.myapplication.models.Movie;
 import com.bill.android.myapplication.models.Review;
@@ -30,11 +29,12 @@ import java.util.ArrayList;
 
 public final class TmdbJsonUtils {
 
+    final String LOG_TAG = TmdbJsonUtils.class.getSimpleName();
+
     public static ArrayList<Movie> getSimpleMovieStringsFromJson(
             Context context, String movieJsonStr)
             throws JSONException {
 
-        final String LOG_TAG = TmdbJsonUtils.class.getSimpleName();
         final String TMDB_RESULTS = "results";
         final String TMDB_TITLE = "title";
         final String TMDB_POSTER_PATH = "poster_path";
@@ -69,7 +69,6 @@ public final class TmdbJsonUtils {
             Context context, String reviewJsonStr)
             throws JSONException {
 
-        final String LOG_TAG = TmdbJsonUtils.class.getSimpleName();
         final String TMDB_RESULTS = "results";
         final String TMDB_AUTHOR = "author";
         final String TMDB_CONTENT = "content";
@@ -98,7 +97,6 @@ public final class TmdbJsonUtils {
             Context context, String trailerJsonStr)
             throws JSONException {
 
-        final String LOG_TAG = TmdbJsonUtils.class.getSimpleName();
         final String TMDB_RESULTS = "results";
         final String TMDB_NAME = "name";
         final String TMDB_KEY = "key";

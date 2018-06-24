@@ -23,13 +23,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     private Context mContext;
     private ArrayList<Movie> mMovieList;
 
-    // Constructor of the class
     public MovieAdapter(Context context, ArrayList<Movie> itemList) {
         mContext = context;
         this.mMovieList = itemList;
     }
 
-    // get the size of the list
     @Override
     public int getItemCount() {
         return mMovieList == null ? 0 : mMovieList.size();
@@ -40,7 +38,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    // specify the row layout file and click for each row
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
@@ -48,7 +45,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return myViewHolder;
     }
 
-    // load data in each row element
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Movie movie = mMovieList.get(position);
@@ -66,7 +62,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         });
     }
 
-    // Static inner class to initialize the views of rows
     static class ViewHolder extends RecyclerView.ViewHolder  {
 
         ImageView poster;

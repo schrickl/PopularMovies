@@ -259,7 +259,7 @@ public class DetailActivity extends AppCompatActivity {
             ContentValues contentValues = new ContentValues();
             contentValues.put(FavoriteEntry.COLUMN_NAME_TITLE, movie.getTitle());
             contentValues.put(FavoriteEntry.COLUMN_NAME_SYNOPSIS, movie.getSynopsis());
-            contentValues.put(FavoriteEntry.COLUMN_NAME_POSTER_PATH, movie.getPoster());
+            contentValues.put(FavoriteEntry.COLUMN_NAME_POSTER_PATH, movie.getFavoritePoster());
             contentValues.put(FavoriteEntry.COLUMN_NAME_VOTE_AVERAGE, movie.getUserRating());
             contentValues.put(FavoriteEntry.COLUMN_NAME_RELEASE_DATE, movie.getReleaseDate());
             contentValues.put(FavoriteEntry.COLUMN_NAME_MOVIE_ID, movie.getId());
