@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -79,14 +78,15 @@ public class MainActivity extends AppCompatActivity {
     private void loadFavorites() {
         Cursor mCursor = getContentResolver().query(FavoritesContract.FavoriteEntry.CONTENT_URI, null, null, null, null);                       // The sort order for the returned rows
 
-        Log.d(LOG_TAG, "count: " + mCursor.getCount());
-        if (mCursor != null || mCursor.getCount() > 0) {
+        if (mCursor != null && mCursor.getCount() > 0) {
             mMovieList = new ArrayList<>(mCursor.getCount());
             mCursor.moveToFirst();
-            for (int i = 0; i < mCursor.getCount(); i++) {
-                mMovieList.add(getMovieFromCursor(mCursor));
+            for (int i = 0; i < mCursor.getCount(); i++, mCursor.moveToNext()) {
+                mMovieList.add(i, getMovieFromCursor(mCursor));
             }
+
             mAdapter.addData(mMovieList);
+            mRecyclerView.setAdapter(mAdapter);
         }
         mCursor.close();
     }
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         return new Movie(title, id, synopsis, voteAverage, releaseDate, posterPath);
     }
-    
+
     private void loadMovieData() {
         ConnectivityManager cm =
                 (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             new FetchMovieTask().execute(getResources().getString(R.string.endpoint_popular));
         }
     }
-
 
     // TODO Put this in separate class
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
