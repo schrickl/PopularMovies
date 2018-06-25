@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter mAdapter;
     @BindView(R.id.rvMovies) RecyclerView mRecyclerView;
 
-    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+    private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_key";
     private Parcelable mSavedRecyclerLayoutState;
 
     @Override
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
         }
     }
-    
+
     private void loadFavorites() {
         Cursor mCursor = getContentResolver().query(FavoritesContract.FavoriteEntry.CONTENT_URI, null, null, null, null);                       // The sort order for the returned rows
 
