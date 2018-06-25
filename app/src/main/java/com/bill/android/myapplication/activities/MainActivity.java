@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -35,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Movie> mMovieList = new ArrayList<>();
     private MovieAdapter mAdapter;
     @BindView(R.id.rvMovies) RecyclerView mRecyclerView;
+
+    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
+    private Parcelable mSavedRecyclerLayoutState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_RECYCLER_LAYOUT, mRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null)
+        {
+            mSavedRecyclerLayoutState = savedInstanceState.getParcelable(BUNDLE_RECYCLER_LAYOUT);
+            mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
+        }
+    }
+    
     private void loadFavorites() {
         Cursor mCursor = getContentResolver().query(FavoritesContract.FavoriteEntry.CONTENT_URI, null, null, null, null);                       // The sort order for the returned rows
 
@@ -149,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 mMovie.clear();
                 mMovie.addAll(mMovieList);
                 mAdapter.notifyDataSetChanged();
+                mRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedRecyclerLayoutState);
             }
         }
     }
