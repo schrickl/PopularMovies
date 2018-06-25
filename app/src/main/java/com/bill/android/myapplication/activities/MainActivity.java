@@ -1,6 +1,7 @@
 package com.bill.android.myapplication.activities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String BUNDLE_RECYCLER_LAYOUT = "recycler_key";
     private Parcelable mSavedRecyclerLayoutState;
 
+    private int sortOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +54,19 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MovieAdapter(this, mMovie);
         mRecyclerView.setAdapter(mAdapter);
 
-        loadMovieData();
+        sortOrder = getSortOrderSetting();
+
+        if (savedInstanceState == null) {
+            loadMovieData();
+        } else {
+            if (sortOrder == R.id.sort_favorites) {
+                loadFavorites();
+            } else if (sortOrder == R.id.sort_top_rated) {
+                new FetchMovieTask().execute(getResources().getString(R.string.endpoint_top_rated));
+            } else {
+                new FetchMovieTask().execute(getResources().getString(R.string.endpoint_popular));
+            }
+        }
     }
 
     @Override
@@ -63,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        saveSortOrderSetting(item.getItemId());
 
         switch (item.getItemId()) {
             case R.id.sort_most_popular:
@@ -134,6 +151,18 @@ public class MainActivity extends AppCompatActivity {
         if (isConnected) {
             new FetchMovieTask().execute(getResources().getString(R.string.endpoint_popular));
         }
+    }
+
+    public int getSortOrderSetting() {
+        SharedPreferences mSettings = this.getSharedPreferences("Settings", 0);
+        return mSettings.getInt("sortOrder", R.id.sort_most_popular);
+    }
+
+    public void saveSortOrderSetting(int newSortOrder) {
+        SharedPreferences mSettings = this.getSharedPreferences("Settings", 0);
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putInt("sortOrder", newSortOrder);
+        editor.apply();
     }
 
     // TODO Put this in separate class
