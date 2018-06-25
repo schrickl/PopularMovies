@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,6 +61,11 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.rv_trailers) RecyclerView mTrailersRecyclerView;
     @BindView(R.id.btn_favorite) Button mFavoriteButton;
 
+    private static final String REVIEWS_KEY = "reviews_state";
+    private static final String TRAILERS_KEY = "trailers_state";
+    private Parcelable mSavedReviewsRecyclerLayoutState;
+    private Parcelable mSavedTrailersRecyclerLayoutState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +81,27 @@ public class DetailActivity extends AppCompatActivity {
 
         loadTrailers();
         loadReviews();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(REVIEWS_KEY, mReviewsRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(TRAILERS_KEY, mTrailersRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if(savedInstanceState != null)
+        {
+            mSavedReviewsRecyclerLayoutState = savedInstanceState.getParcelable(REVIEWS_KEY);
+            mReviewsRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedReviewsRecyclerLayoutState);
+
+            mSavedTrailersRecyclerLayoutState = savedInstanceState.getParcelable(TRAILERS_KEY);
+            mTrailersRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedTrailersRecyclerLayoutState);
+        }
     }
 
     private void initializeUI() {
@@ -202,6 +229,7 @@ public class DetailActivity extends AppCompatActivity {
                 mTrailer.clear();
                 mTrailer.addAll(mTrailerList);
                 mTrailerAdapter.notifyDataSetChanged();
+                mReviewsRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedReviewsRecyclerLayoutState);
             }
         }
     }
@@ -240,6 +268,7 @@ public class DetailActivity extends AppCompatActivity {
                 mReview.clear();
                 mReview.addAll(mReviewList);
                 mReviewAdapter.notifyDataSetChanged();
+                mTrailersRecyclerView.getLayoutManager().onRestoreInstanceState(mSavedTrailersRecyclerLayoutState);
             }
         }
     }
